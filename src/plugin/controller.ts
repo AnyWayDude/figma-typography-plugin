@@ -1,26 +1,48 @@
+import { getAllTextNodes } from '../app/helpers/getAllTextNodes';
+
 figma.showUI(__html__);
+figma.ui.resize(500, 500);
 
-figma.ui.onmessage = (msg) => {
-  if (msg.type === 'create-rectangles') {
-    const nodes = [];
+figma.on('selectionchange', () => {
+  const selectedObjects = figma.currentPage.selection;
 
-    for (let i = 0; i < msg.count; i++) {
-      const rect = figma.createRectangle();
-      rect.x = i * 150;
-      rect.fills = [{ type: 'SOLID', color: { r: 1, g: 0.5, b: 0 } }];
-      figma.currentPage.appendChild(rect);
-      nodes.push(rect);
-    }
+  const textNodes = selectedObjects.reduce((acc: TextNode[], object) => {
+    acc.push(...getAllTextNodes(object));
 
-    figma.currentPage.selection = nodes;
-    figma.viewport.scrollAndZoomIntoView(nodes);
+    return acc;
+  }, []);
 
-    // This is how figma responds back to the ui
-    figma.ui.postMessage({
-      type: 'create-rectangles',
-      message: `Created ${msg.count} Rectangles`,
+  // const textNodesMap = selectedObjects.map((item) => getAllTextNodes(item)).flat();
+
+  if (textNodes.length > 0) {
+    const filteredTextNodes = textNodes.filter((textNode) => {
+      if (typeof textNode.fontSize === 'number') {
+        const fontSize = textNode.fontSize;
+        return fontSize < 10;
+      }
+      return false;
     });
-  }
+    console.log('отфильтрованный', filteredTextNodes);
+    console.log('нефильтрованный', textNodes);
 
-  figma.closePlugin();
-};
+    figma.ui.postMessage({
+      type: 'display-text-nodes',
+      frameName: selectedObjects[0].name,
+      textNodes: filteredTextNodes.map(({ id, name, characters }) => {
+        return { id, name, text: characters };
+      }),
+    });
+
+    figma.ui.onmessage = (msg) => {
+      if (msg.type === 'scanFrame') {
+        filteredTextNodes.forEach(({ characters: text, name }) => {
+          console.log(name);
+
+          console.log('Text:', text);
+        });
+      } else {
+        console.log('No text nodes selected');
+      }
+    };
+  }
+});

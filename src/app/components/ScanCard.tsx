@@ -17,7 +17,7 @@ const ScanCard = ({ onClick, disabled, frameName }: prorps) => {
         alignItems: 'center',
         mt: '5px',
         mb: '10px',
-        border: '3px #EBEBEB solid',
+        border: '4px #EBEBEB solid',
         borderStyle: 'solid none solid none',
         borderRadius: 2,
       }}
@@ -31,7 +31,7 @@ const ScanCard = ({ onClick, disabled, frameName }: prorps) => {
           borderRadius: 2,
         }}
       >
-        <Typography sx={{ fontSize: 18, p: 2, fontWeight: '500' }} variant="h6">
+        <Typography sx={{ fontSize: 22, p: 2, fontWeight: '300' }} variant="h6">
           {frameName ? `Frame name: ${frameName}` : 'Choose frame to scan'}
         </Typography>
       </Card>

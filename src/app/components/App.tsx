@@ -44,7 +44,9 @@ function App() {
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
         {textNodeCollection.length === 0 && frameName !== '' ? (
-          <Typography sx={{ textAlign: 'center', mt: 2 }}>The font does not need correction</Typography>
+          <Typography sx={{ textAlign: 'center', mt: 2, fontSize: '30px', fontWeight: '700' }}>
+            Font in selected frame is okay
+          </Typography>
         ) : (
           scanResult.map((textNode) => <ScannedElements key={textNode.id} data={textNode} />)
         )}

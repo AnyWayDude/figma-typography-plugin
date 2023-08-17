@@ -3,13 +3,9 @@ import Card from '@mui/material/Card';
 import { Box, CardContent, Typography } from '@mui/material';
 import FormatSizeIcon from '@mui/icons-material/FormatSize';
 import styled from '@emotion/styled';
-
+import { MyTextNode } from '../types';
 interface Props {
-  data: {
-    id: string;
-    characters: string;
-    name: string;
-  };
+  data: MyTextNode;
 }
 
 const CustomCardContent = styled(CardContent)({

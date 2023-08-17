@@ -3,22 +3,19 @@ import '../styles/ui.css';
 import ScanCard from './ScanCard';
 import { Box, Typography } from '@mui/material';
 import ScannedElements from './ScannedElements';
-
-// interface Props {
-//   id: string;
-//   text: string;
-//   name: string;
-// }
+import { filterTextNodes } from '../helpers/filterTextNodes';
+import { MyTextNode } from '../types';
 
 function App() {
   const [textNodeCollection, setTextNodeCollection] = useState([]);
-  const [scanResult, setScanResult] = useState([]);
-  const [frameName, setFrameName] = useState('');
+  const [scanResult, setScanResult] = useState<MyTextNode[] | null>(null);
+  const [frameName, setFrameName] = useState(null);
 
   const scanOnClick = () => {
-    setScanResult(textNodeCollection);
+    const filteredScanResult = filterTextNodes(textNodeCollection, 10);
+    setScanResult(filteredScanResult);
     //send message to controller (plugin)
-    parent.postMessage({ pluginMessage: { type: 'scanFrame' } }, '*');
+    // parent.postMessage({ pluginMessage: { type: 'scanFrame' } }, '*');
   };
 
   React.useEffect(() => {
@@ -26,11 +23,9 @@ function App() {
     const onMessageListener = (msg: MessageEvent) => {
       const { type, textNodes, frameName } = msg.data.pluginMessage;
       if (type === 'display-text-nodes') {
-        console.log('get data in react', textNodes);
-        console.log('Frame name:', frameName);
         setFrameName(frameName);
         setTextNodeCollection(textNodes);
-        setScanResult([]);
+        setScanResult(null);
       }
     };
     window.onmessage = onMessageListener;
@@ -43,12 +38,22 @@ function App() {
         <ScanCard frameName={frameName} onClick={scanOnClick} disabled={textNodeCollection.length === 0} />
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-        {textNodeCollection.length === 0 && frameName !== '' ? (
+        {!frameName && (
+          <Typography sx={{ textAlign: 'center', mt: 2, fontSize: '30px', fontWeight: '700' }}>
+            Nothing is selected
+          </Typography>
+        )}
+        {scanResult === null ? null : scanResult.length === 0 ? (
           <Typography sx={{ textAlign: 'center', mt: 2, fontSize: '30px', fontWeight: '700' }}>
             Font in selected frame is okay
           </Typography>
         ) : (
           scanResult.map((textNode) => <ScannedElements key={textNode.id} data={textNode} />)
+        )}
+        {frameName && textNodeCollection.length === 0 && (
+          <Typography sx={{ textAlign: 'center', mt: 2, fontSize: '30px', fontWeight: '700' }}>
+            There are no text elements
+          </Typography>
         )}
       </Box>
     </div>

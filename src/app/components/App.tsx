@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import '../styles/ui.css';
-import ScanCard from './ScanCard';
-import { Box, Typography } from '@mui/material';
-import ScannedElements from './ScannedElements';
+import ScanFrame from './ScanFrame';
+import { Box } from '@mui/material';
 import { filterTextNodes } from '../helpers/filterTextNodes';
 import { MyTextNode } from '../types';
+import ScanResultPunel from './ScanResultsPanel';
 
 function App() {
   const [textNodeCollection, setTextNodeCollection] = useState([]);
@@ -35,27 +35,9 @@ function App() {
   return (
     <div>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <ScanCard frameName={frameName} onClick={scanOnClick} disabled={textNodeCollection.length === 0} />
+        <ScanFrame frameName={frameName} onClick={scanOnClick} disabled={textNodeCollection.length === 0} />
       </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-        {!frameName && (
-          <Typography sx={{ textAlign: 'center', mt: 2, fontSize: '30px', fontWeight: '700' }}>
-            Nothing is selected
-          </Typography>
-        )}
-        {scanResult === null ? null : scanResult.length === 0 ? (
-          <Typography sx={{ textAlign: 'center', mt: 2, fontSize: '30px', fontWeight: '700' }}>
-            Font in selected frame is okay
-          </Typography>
-        ) : (
-          scanResult.map((textNode) => <ScannedElements key={textNode.id} data={textNode} />)
-        )}
-        {frameName && textNodeCollection.length === 0 && (
-          <Typography sx={{ textAlign: 'center', mt: 2, fontSize: '30px', fontWeight: '700' }}>
-            There are no text elements
-          </Typography>
-        )}
-      </Box>
+      <ScanResultPunel data={scanResult} frameName={frameName} collection={textNodeCollection} />
     </div>
   );
 }

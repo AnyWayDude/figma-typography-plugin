@@ -1,7 +1,7 @@
 import React from 'react';
 import Card from '@mui/material/Card';
 import { Box, IconButton, Typography } from '@mui/material';
-import ManageSearchIcon from '@mui/icons-material/ManageSearch';
+import DocumentScannerOutlinedIcon from '@mui/icons-material/DocumentScannerOutlined';
 
 interface prorps {
   onClick: () => void;
@@ -9,7 +9,7 @@ interface prorps {
   frameName: string;
 }
 
-const ScanCard = ({ onClick, disabled, frameName }: prorps) => {
+const ScanFrame = ({ onClick, disabled, frameName }: prorps) => {
   return (
     <Box
       sx={{
@@ -17,7 +17,7 @@ const ScanCard = ({ onClick, disabled, frameName }: prorps) => {
         alignItems: 'center',
         mt: '5px',
         mb: '10px',
-        border: '3px #EBEBEB solid',
+        border: '4px #EBEBEB solid',
         borderStyle: 'solid none solid none',
         borderRadius: 2,
       }}
@@ -31,15 +31,22 @@ const ScanCard = ({ onClick, disabled, frameName }: prorps) => {
           borderRadius: 2,
         }}
       >
-        <Typography sx={{ fontSize: 18, p: 2, fontWeight: '500' }} variant="h6">
+        <Typography sx={{ fontSize: 22, p: 2, fontWeight: '300' }} variant="h6">
           {frameName ? `Frame name: ${frameName}` : 'Choose frame to scan'}
         </Typography>
       </Card>
-      <IconButton aria-label="scan" onClick={onClick} disabled={disabled}>
-        <ManageSearchIcon fontSize="large" />
+      <IconButton
+        aria-label="scan"
+        onClick={onClick}
+        disabled={disabled}
+        sx={{
+          color: '#003660',
+        }}
+      >
+        <DocumentScannerOutlinedIcon fontSize="large" />
       </IconButton>
     </Box>
   );
 };
 
-export default ScanCard;
+export default ScanFrame;

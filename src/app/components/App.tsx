@@ -1,24 +1,21 @@
 import React, { useState } from 'react';
 import '../styles/ui.css';
-import ScanCard from './ScanCard';
-import { Box, Typography } from '@mui/material';
-import ScannedElements from './ScannedElements';
-
-// interface Props {
-//   id: string;
-//   text: string;
-//   name: string;
-// }
+import ScanFrame from './ScanFrame';
+import { Box } from '@mui/material';
+import { filterTextNodes } from '../helpers/filterTextNodes';
+import { MyTextNode } from '../types';
+import ScanResultPunel from './ScanResultsPanel';
 
 function App() {
   const [textNodeCollection, setTextNodeCollection] = useState([]);
-  const [scanResult, setScanResult] = useState([]);
-  const [frameName, setFrameName] = useState('');
+  const [scanResult, setScanResult] = useState<MyTextNode[] | null>(null);
+  const [frameName, setFrameName] = useState(null);
 
   const scanOnClick = () => {
-    setScanResult(textNodeCollection);
+    const filteredScanResult = filterTextNodes(textNodeCollection, 10);
+    setScanResult(filteredScanResult);
     //send message to controller (plugin)
-    parent.postMessage({ pluginMessage: { type: 'scanFrame' } }, '*');
+    // parent.postMessage({ pluginMessage: { type: 'scanFrame' } }, '*');
   };
 
   React.useEffect(() => {
@@ -26,11 +23,9 @@ function App() {
     const onMessageListener = (msg: MessageEvent) => {
       const { type, textNodes, frameName } = msg.data.pluginMessage;
       if (type === 'display-text-nodes') {
-        console.log('get data in react', textNodes);
-        console.log('Frame name:', frameName);
         setFrameName(frameName);
         setTextNodeCollection(textNodes);
-        setScanResult([]);
+        setScanResult(null);
       }
     };
     window.onmessage = onMessageListener;
@@ -40,15 +35,9 @@ function App() {
   return (
     <div>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <ScanCard frameName={frameName} onClick={scanOnClick} disabled={textNodeCollection.length === 0} />
+        <ScanFrame frameName={frameName} onClick={scanOnClick} disabled={textNodeCollection.length === 0} />
       </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-        {textNodeCollection.length === 0 && frameName !== '' ? (
-          <Typography sx={{ textAlign: 'center', mt: 2 }}>The font does not need correction</Typography>
-        ) : (
-          scanResult.map((textNode) => <ScannedElements key={textNode.id} data={textNode} />)
-        )}
-      </Box>
+      <ScanResultPunel data={scanResult} frameName={frameName} collection={textNodeCollection} />
     </div>
   );
 }

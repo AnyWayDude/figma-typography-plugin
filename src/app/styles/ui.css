@@ -2,5 +2,11 @@ body {
   align-items: center;
   margin: 5px;
   background-color:#FFFBF2;
+  overflow: auto;
+  -ms-overflow-style: none; /* Remove the scrollbar in Internet Explorer/Edge */
+  scrollbar-width: none;
 }
 
+body::-webkit-scrollbar {
+  display: none; /* Remove the scrollbar in browsers using Webkit (Chrome, Safari, Opera) */
+}
